@@ -1,0 +1,5 @@
+*.log
+*.un~
+*.sw[op]
+spec/db/*.db
+pkg/
