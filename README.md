@@ -50,3 +50,12 @@ Example
 		ModelClass.insert(conflict)
 		ModelClass.insert(conflict)
 	end		# Exception!
+
+**Custom batch size is supported (the default is unlimited)**
+
+    ModelClass.batch_insert :batch_size => 10 do
+		# This loop will cause 3 INSERT statements
+		37.times do |i|
+			ModelClass.insert :name => "object #{i}", :description => "The #{i.ordinalize} object"
+		end
+	end     # And the last 7 objects will be inserted here.
