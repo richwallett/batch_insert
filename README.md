@@ -7,6 +7,12 @@ The API is very similar to the standard `new` and `create` functions provided
 by ActiveRecord, but will not return a saved object to the caller.
 
 
+License
+=======
+
+This plugin is released under the MIT license, and was contributed to the Rails community by the good people at [Software Projects](http://www.sp.com.au)
+
+
 Example
 =======
 
@@ -44,5 +50,3 @@ Example
 		ModelClass.insert(conflict)
 		ModelClass.insert(conflict)
 	end		# Exception!
-
-Copyright (c) 2010 Shaun Mangelsdorf, released under the MIT license
