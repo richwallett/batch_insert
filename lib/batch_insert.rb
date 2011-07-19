@@ -9,10 +9,10 @@ module ActiveRecord
 
     module ClassMethods
       def batch_insert(opts={})
-        self.batched_inserts = returning(batched_inserts) do
+        self.batched_inserts = batched_inserts.tap do
           self.batched_inserts = []
 
-          self.batched_insert_opts = returning(batched_insert_opts) do
+          self.batched_insert_opts = batched_insert_opts.tap do
             self.batched_insert_opts = opts
             yield
           end
@@ -42,7 +42,7 @@ module ActiveRecord
       end
 
       def insert(opts={})
-        returning new(opts) do |obj|
+        new(opts).tap do |obj|
           raise RecordInvalid.new(obj) unless obj.valid?
           self.batched_inserts << obj.attributes
 
