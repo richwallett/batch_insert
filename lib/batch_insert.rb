@@ -1,12 +1,6 @@
 # Released under the MIT license. See the MIT-LICENSE file for details
-module ActiveRecord
-  module BatchInsert
-    def self.included(base)
-      base.class_inheritable_accessor :batched_inserts
-      base.class_inheritable_accessor :batched_insert_opts
-      base.extend ClassMethods
-    end
-
+module BatchInsert
+  module ActiveRecordExtension
     module ClassMethods
       def batch_insert(opts={})
         self.batched_inserts = batched_inserts.tap do
@@ -43,12 +37,22 @@ module ActiveRecord
 
       def insert(opts={})
         new(opts).tap do |obj|
-          raise RecordInvalid.new(obj) unless obj.valid?
+          raise ActiveRecord::RecordInvalid.new(obj) unless obj.valid?
           self.batched_inserts << obj.attributes
 
           limit = batched_insert_opts[:batch_size].to_i
           flush_batch_insert_queue if limit > 0 and self.batched_inserts.length >= limit
         end
+      end
+    end
+  end
+
+  class Railtie < Rails::Railtie
+    initializer 'batch_insert.install_active_record_mixins' do
+      ActiveRecord::Base.instance_eval do
+        send :extend, ::BatchInsert::ActiveRecordExtension::ClassMethods
+        class_inheritable_accessor :batched_inserts
+        class_inheritable_accessor :batched_insert_opts
       end
     end
   end
