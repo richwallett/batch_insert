@@ -51,8 +51,8 @@ module BatchInsert
     initializer 'batch_insert.install_active_record_mixins' do
       ActiveRecord::Base.instance_eval do
         send :extend, ::BatchInsert::ActiveRecordExtension::ClassMethods
-        class_inheritable_accessor :batched_inserts
-        class_inheritable_accessor :batched_insert_opts
+        class_attribute :batched_inserts
+        class_attribute :batched_insert_opts
       end
     end
   end
