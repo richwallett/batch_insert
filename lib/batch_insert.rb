@@ -1,5 +1,4 @@
 # Released under the MIT license. See the MIT-LICENSE file for details
-require 'batch_insert/version'
 
 module BatchInsert
   module ActiveRecordExtension
