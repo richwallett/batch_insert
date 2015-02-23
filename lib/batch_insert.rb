@@ -45,6 +45,13 @@ module BatchInsert
           flush_batch_insert_queue if limit > 0 and self.batched_inserts.length >= limit
         end
       end
+
+      def insert_without_validation(attributes={})
+        self.batched_inserts << attributes
+
+        limit = batched_insert_opts[:batch_size].to_i
+        flush_batch_insert_queue if limit > 0 and self.batched_inserts.length >= limit
+      end
     end
   end
 
