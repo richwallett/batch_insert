@@ -10,9 +10,8 @@ module BatchInsert
           self.batched_insert_opts = batched_insert_opts.tap do
             self.batched_insert_opts = opts
             yield
+            flush_batch_insert_queue
           end
-
-          flush_batch_insert_queue
         end
       end
 
@@ -25,11 +24,17 @@ module BatchInsert
       def flush_batch_insert_queue
         unless self.batched_inserts.empty?
           column_names = columns.map(&:name).sort - [primary_key]
+
+          if self.batched_insert_opts[:on_duplicate_key_update]
+            duplicate_key_fragment = "ON DUPLICATE KEY UPDATE #{self.batched_insert_opts[:on_duplicate_key_update]}"
+          end
+
           connection.execute %Q{
             INSERT INTO #{connection.quote_table_name(table_name)}
             (#{column_names.map{|n| connection.quote_column_name(n)}.join(',')})
             VALUES
             #{batch_insert_values_string(column_names)}
+            #{duplicate_key_fragment}
           }.gsub(/\s+/,' ').squeeze(' ').strip
 
           batched_inserts.clear
