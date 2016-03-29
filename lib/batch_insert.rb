@@ -18,7 +18,7 @@ module BatchInsert
 
       def batch_insert_values_string(column_names)
         self.batched_inserts.collect do |attributes|
-          "(#{column_names.map{|n| quote_value(attributes[n], columns_hash[n])}.join(',')})"
+          "(#{column_names.map{|n| quote_value(attributes.fetch(n){attributes[n.to_sym]}, columns_hash[n])}.join(',')})"
         end.join ','
       end
 
